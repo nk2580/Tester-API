@@ -1,3 +1,14 @@
+package main
+
+import (
+	"log"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+)
+
 type Ping struct {
     ID      uint   `json:"id" gorm:"primaryKey"`
     Message string `json:"message" binding:"required"` // Add validation using binding tag
