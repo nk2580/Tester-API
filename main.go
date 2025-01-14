@@ -30,7 +30,7 @@ func main() {
     r := gin.Default()
 
     // Register routes
-    r.POST("/pings", func(c *gin.Context) {
+    r.POST("/ping", func(c *gin.Context) {
         var ping Ping
         if err := c.ShouldBindJSON(&ping); err != nil {
             c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ping data"})
