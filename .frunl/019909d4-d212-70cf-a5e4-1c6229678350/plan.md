@@ -93,57 +93,57 @@ No changes required. The existing Ping table with ID and Message columns will be
 
 # TASKS
 
-- [ ] **Task 1.1: Create main_test.go file**
-- **Status:** Pending
+- [x] **Task 1.1: Create main_test.go file**
+- **Status:** Complete
 - **Context:**
   - New test file to contain unit tests for the POST /ping endpoint.
   - Reuse Ping struct and handler logic from main.go.
 - **Dependencies:** None
 - **Validation:**
-  - [ ] File exists at main_test.go
-  - [ ] File contains package main and necessary imports
+  - [x] File exists at main_test.go
+  - [x] File contains package main and necessary imports
 
-- [ ] **Task 1.2: Set up test database and router**
-- **Status:** Pending
+- [x] **Task 1.2: Set up test database and router**
+- **Status:** Complete
 - **Context:**
   - Initialize in-memory SQLite database for tests.
   - Set up Gin router with POST /ping route.
 - **Dependencies:** Task 1.1
 - **Validation:**
-  - [ ] Test setup function creates DB connection and migrates schema
-  - [ ] Router is initialized with the handler
+  - [x] Test setup function creates DB connection and migrates schema
+  - [x] Router is initialized with the handler
 
-- [ ] **Task 1.3: Write test for successful ping creation**
-- **Status:** Pending
+- [x] **Task 1.3: Write test for successful ping creation**
+- **Status:** Complete
 - **Context:**
   - Test sends valid JSON to POST /ping.
   - Verifies 200 status and success message.
   - Checks database for saved ping.
 - **Dependencies:** Task 1.2
 - **Validation:**
-  - [ ] Test function passes when run
-  - [ ] Asserts correct status code and response body
+  - [x] Test function passes when run
+  - [x] Asserts correct status code and response body
 
-- [ ] **Task 1.4: Write test for invalid input handling**
-- **Status:** Pending
+- [x] **Task 1.4: Write test for invalid input handling**
+- **Status:** Complete
 - **Context:**
   - Test sends invalid JSON to POST /ping.
   - Verifies 400 status and error message.
   - Ensures no data is saved to database.
 - **Dependencies:** Task 1.2
 - **Validation:**
-  - [ ] Test function passes when run
-  - [ ] Asserts correct error status and message
+  - [x] Test function passes when run
+  - [x] Asserts correct error status and message
 
-- [ ] **Task 1.5: Run tests and verify**
-- **Status:** Pending
+- [x] **Task 1.5: Run tests and verify**
+- **Status:** Complete
 - **Context:**
   - Execute go test to run the unit tests.
   - Ensure all tests pass.
 - **Dependencies:** Task 1.3, Task 1.4
 - **Validation:**
-  - [ ] Command `go test` succeeds with no failures
-  - [ ] Coverage report shows tests executed
+  - [x] Command `go test` succeeds with no failures
+  - [x] Coverage report shows tests executed
 
 # VERIFICATION
 
