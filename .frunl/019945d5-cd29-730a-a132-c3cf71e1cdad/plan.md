@@ -126,26 +126,26 @@ Assumptions & Open Questions
 
 # TASKS
 
-- [ ] **Task 1.1: Add server.go with SetupRouter(db *gorm.DB)**
-- **Status:** Pending
+- [x] **Task 1.1: Add server.go with SetupRouter(db *gorm.DB)**
+- **Status:** Complete
 - **Context:**
  - Move the inline route registration (currently in main.go) into a single function SetupRouter(db *gorm.DB) *gin.Engine.
  - Keeps handler logic identical to current implementation, referencing Ping model.
  - Enables dependency injection of an in-memory DB for tests.
 - **Dependencies:** None
 - **Validation:**
- - [ ] File exists at ./server.go containing "func SetupRouter(db *gorm.DB) *gin.Engine"
- - [ ] File registers POST /ping and GET /pings using the provided db
- - [ ] go vet / go build compiles successfully with the new file present (initial compile check)
+ - [x] File exists at ./server.go containing "func SetupRouter(db *gorm.DB) *gin.Engine"
+ - [x] File registers POST /ping and GET /pings using the provided db
+ - [x] go vet / go build compiles successfully with the new file present (initial compile check)
 
 - [ ] **Task 1.2: Modify main.go to use SetupRouter and keep DB init**
-- **Status:** Pending
+- **Status:** In Progress
 - **Context:**
  - main.go should initialize the DB, call AutoMigrate(&Ping{}), then call r := SetupRouter(db) and r.Run(":8080").
  - Remove the duplicated inline route registration from main.go (moved to server.go).
 - **Dependencies:** Task 1.1
 - **Validation:**
- - [ ] main.go contains call to SetupRouter(db) and no duplicate route registrations remain
+ - [x] main.go contains call to SetupRouter(db) and no duplicate route registrations remain
  - [ ] Running go build (locally) succeeds (basic compile check)
  - [ ] Manual runtime smoke check (optional): run the server and hit endpoints via curl (not required for unit test)
 
