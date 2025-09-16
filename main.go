@@ -14,19 +14,7 @@ type Ping struct {
 	Message string `json:"message"`
 }
 
-func main() {
-	// Initialize the database
-	db, err := gorm.Open(sqlite.Open("db/data.db"), &gorm.Config{})
-	if err != nil {
-		log.Fatalf("failed to connect database: %v", err)
-	}
-
-	// Auto-migrate the schema
-	err = db.AutoMigrate(&Ping{})
-	if err != nil {
-		log.Fatalf("failed to migrate database: %v", err)
-	}
-
+func SetupRouter(db *gorm.DB) *gin.Engine {
 	r := gin.Default()
 
 	// Register routes
@@ -57,6 +45,24 @@ func main() {
 
 		c.JSON(http.StatusOK, pings)
 	})
+
+	return r
+}
+
+func main() {
+	// Initialize the database
+	db, err := gorm.Open(sqlite.Open("db/data.db"), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("failed to connect database: %v", err)
+	}
+
+	// Auto-migrate the schema
+	err = db.AutoMigrate(&Ping{})
+	if err != nil {
+		log.Fatalf("failed to migrate database: %v", err)
+	}
+
+	r := SetupRouter(db)
 
 	// Start the server
 	if err := r.Run(":8080"); err != nil {

@@ -128,20 +128,25 @@ Assumptions & Open Questions
 # TASKS
 
 - [ ] **Task 1.1: Minimal refactor — add SetupRouter(db *gorm.DB) and wire main() to use it**
-- **Status:** Pending
+- **Status:** In Progress
+- **Validation:**
+  - [x] main.go contains the function signature: "func SetupRouter(db *gorm.DB) *gin.Engine"
+  - [x] main.go still calls SetupRouter(db) in main() (i.e., "r := SetupRouter(db)" exists)
+  - [x] No other behavioral changes to route registration (POST /ping and GET /pings present)
+ - [ ] Code compiles: run `go build ./...` locally (expected: no compile errors)
 - **Context:**
  - Modify main.go to introduce a function: func SetupRouter(db *gorm.DB) *gin.Engine
  - Move the route registration (POST /ping and GET /pings) into SetupRouter so tests can instantiate the router with an injected DB.
  - Keep main() behavior unchanged other than calling SetupRouter(db) and calling r.Run(":8080").
 - **Dependencies:** None
 - **Validation:**
- - [ ] main.go contains the function signature: "func SetupRouter(db *gorm.DB) *gin.Engine"
- - [ ] main.go still calls SetupRouter(db) in main() (i.e., "r := SetupRouter(db)" exists)
- - [ ] No other behavioral changes to route registration (POST /ping and GET /pings present)
+  - [x] main.go contains the function signature: "func SetupRouter(db *gorm.DB) *gin.Engine"
+  - [x] main.go still calls SetupRouter(db) in main() (i.e., "r := SetupRouter(db)" exists)
+  - [x] No other behavioral changes to route registration (POST /ping and GET /pings present)
  - [ ] Code compiles: run `go build ./...` locally (expected: no compile errors)
 
 - [ ] **Task 1.2: Add a single unit test file main_test.go with TestPingHandler_PersistsPing**
-- **Status:** Pending
+- **Status:** In Progress
 - **Context:**
  - Create file main_test.go in repository root (package main).
  - Implement one test: TestPingHandler_PersistsPing which:
@@ -154,9 +159,9 @@ Assumptions & Open Questions
  - Use only stdlib testing + httptest, encoding/json, bytes and existing gorm/sqlite imports.
 - **Dependencies:** Task 1.1
 - **Validation:**
- - [ ] File path: ./main_test.go exists
- - [ ] main_test.go contains the test function: "func TestPingHandler_PersistsPing(t *testing.T)"
- - [ ] The test uses an in-memory DSN (e.g., "file::memory:?cache=shared") — confirm the string appears in the test
+ - [x] File path: ./main_test.go exists
+ - [x] main_test.go contains the test function: "func TestPingHandler_PersistsPing(t *testing.T)"
+ - [x] The test uses an in-memory DSN (e.g., "file::memory:?cache=shared") — confirm the string appears in the test
  - [ ] Running `go test -run TestPingHandler_PersistsPing -v ./...` returns exit code 0 and shows the test passing
  - [ ] Running `go test ./...` returns exit code 0 (no unintended failures caused)
  - [ ] Confirm db/data.db on disk (if present) is not modified by the test run (validate by file modtime or absence of new files)
