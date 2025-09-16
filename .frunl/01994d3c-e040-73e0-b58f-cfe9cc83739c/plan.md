@@ -113,20 +113,24 @@ Assumptions & Open Questions
 
 # TASKS
 
-- [ ] **Task 1.1: Add canonical MIT LICENSE file at repository root**
+- [x] **Task 1.1: Add canonical MIT LICENSE file at repository root**
 - **Status:** In Progress
+
+Moving task to In Progress: Add canonical MIT LICENSE file at repository root
 - **Context:**
  - Create a new file at ./LICENSE containing the canonical MIT license text (including SPDX identifier "MIT").
  - Insert current year (2025) and a COPYRIGHT HOLDER placeholder if the owner is not yet known. Mark the placeholder clearly in the file and PR description.
  - Reference SPEC rules: file name, canonical phrases, SPDX identifier.
 - **Dependencies:** None
 - **Validation:**
- - [ ] Objective file/path checks: ./LICENSE exists at repository root
- - [ ] Logic checks: LICENSE contains "MIT License", the phrase "Permission is hereby granted, free of charge", and "SPDX-License-Identifier: MIT" (or "MIT" visible)
- - [ ] Passing high-level unit tests: Create/enable TestLicenseFileExists (see Task 1.3) and ensure it detects the file
+  - [x] Objective file/path checks: ./LICENSE exists at repository root
+  - [x] Logic checks: LICENSE contains "MIT License", the phrase "Permission is hereby granted, free of charge", and "SPDX-License-Identifier: MIT" (or "MIT" visible)
+  - [x] Passing high-level unit tests: Create/enable TestLicenseFileExists (see Task 1.3) and ensure it detects the file
 
-- [ ] **Task 1.2: Update README.md to link to the LICENSE**
+- [x] **Task 1.2: Update README.md to link to the LICENSE**
 - **Status:** Pending
+
+Moving task to In Progress: Update README.md to link to the LICENSE
 - **Context:**
  - Modify README.md to add a "## License" section with a relative link to ./LICENSE, e.g.:
    This project is licensed under the MIT License — see the [LICENSE](./LICENSE) file for details.
@@ -134,11 +138,14 @@ Assumptions & Open Questions
  - Reference SPEC user story (contributors discovering license) and DESIGN wireframe.
 - **Dependencies:** Task 1.1
 - **Validation:**
- - [ ] Objective file/path checks: README.md contains the Markdown link "[LICENSE](./LICENSE)" or a variant that resolves to ./LICENSE
- - [ ] Logic checks: The link text and path are correct and clearly labeled "License"
- - [ ] Passing high-level unit tests: Create/enable TestReadmeLinksLicense (see Task 1.3) and ensure it passes
+  - [x] Objective file/path checks: README.md contains the Markdown link "[LICENSE](./LICENSE)" or a variant that resolves to ./LICENSE
+  - [x] Logic checks: The link text and path are correct and clearly labeled "License"
+  - [x] Passing high-level unit tests: Create/enable TestReadmeLinksLicense (see Task 1.3) and ensure it passes
 
 - [ ] **Task 1.3: Add lightweight verification tests and a local verification script**
+- **Status:** In Progress
+
+Moving task to In Progress: Add lightweight verification tests and a local verification script
 - **Status:** Pending
 - **Context:**
  - Add a small Go test file (e.g., license_test.go) at repository root or tests/ that implements:
@@ -148,7 +155,7 @@ Assumptions & Open Questions
  - Purpose: provide automated, quick verification for maintainers and CI (without changing CI workflows).
 - **Dependencies:** Task 1.1, Task 1.2
 - **Validation:**
- - [ ] Objective file/path checks: license_test.go (or equivalent) exists at the planned path
+  - [x] Objective file/path checks: license_test.go (or equivalent) exists at the planned path
  - [ ] Logic checks: Tests check for canonical MIT phrases and README link (see SPEC scenarios)
  - [ ] Passing high-level unit tests: Running `go test ./...` returns exit code 0 and the two tests pass (or running scripts/verify-license.sh exits 0)
 
