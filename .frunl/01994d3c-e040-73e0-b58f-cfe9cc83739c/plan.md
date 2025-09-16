@@ -114,7 +114,7 @@ Assumptions & Open Questions
 # TASKS
 
 - [ ] **Task 1.1: Add canonical MIT LICENSE file at repository root**
-- **Status:** Pending
+- **Status:** In Progress
 - **Context:**
  - Create a new file at ./LICENSE containing the canonical MIT license text (including SPDX identifier "MIT").
  - Insert current year (2025) and a COPYRIGHT HOLDER placeholder if the owner is not yet known. Mark the placeholder clearly in the file and PR description.
