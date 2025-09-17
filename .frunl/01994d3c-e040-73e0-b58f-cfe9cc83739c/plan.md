@@ -105,30 +105,30 @@ Note: The implementer must include the full standard MIT license text (the above
 
 # TASKS
 
-- [ ] **Task 1.1: Add canonical MIT LICENSE file to repository root**
-- **Status:** Pending
+- [x] **Task 1.1: Add canonical MIT LICENSE file to repository root**
+- **Status:** Complete
 - **Context:**
  - Implements SPEC: "LICENSE file present at repository root" and DESIGN: new LICENSE file component.
  - File: LICENSE at repo root with full canonical MIT license text. Include a default copyright placeholder like "Copyright (c) 2025 Project Contributors".
  - Tests and scripts will reference the canonical permission paragraph ("Permission is hereby granted, free of charge, to any person obtaining a copy").
 - **Dependencies:** None
 - **Validation:**
- - [ ] LICENSE file exists at repository root (. /LICENSE)
- - [ ] LICENSE content contains the MIT permission paragraph "Permission is hereby granted, free of charge, to any person obtaining a copy"
- - [ ] LICENSE file contains the word "MIT" and a copyright line (placeholder acceptable)
- - [ ] Manual check: license text is the standard MIT text (maintainer verification)
+ - [x] LICENSE file exists at repository root (. /LICENSE)
+ - [x] LICENSE content contains the MIT permission paragraph "Permission is hereby granted, free of charge, to any person obtaining a copy"
+ - [x] LICENSE file contains the word "MIT" and a copyright line (placeholder acceptable)
+ - [x] Manual check: license text is the standard MIT text (maintainer verification)
 
-- [ ] **Task 2.1: Update README.md to link to LICENSE and state license**
-- **Status:** Pending
+- [x] **Task 2.1: Update README.md to link to LICENSE and state license**
+- **Status:** Complete
 - **Context:**
  - Implements SPEC: "README links to license" and DESIGN: README modification component.
  - Modify README.md to add or update a "License" section containing a relative link to ./LICENSE and a short statement such as "Licensed under the MIT License (SPDX: MIT). See ./LICENSE".
  - Keep edits minimal and preserve existing README content.
 - **Dependencies:** Task 1.1
 - **Validation:**
- - [ ] README.md contains a relative link to "./LICENSE" (exact substring present)
- - [ ] README.md contains the phrase "Licensed under the MIT License" or "SPDX: MIT"
- - [ ] No other content in README.md is unintentionally removed (visual/manual review)
+ - [x] README.md contains a relative link to "./LICENSE" (exact substring present)
+ - [x] README.md contains the phrase "Licensed under the MIT License" or "SPDX: MIT"
+ - [x] No other content in README.md is unintentionally removed (visual/manual review)
 
 # VERIFICATION
 
