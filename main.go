@@ -5,14 +5,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nk2580/Tester-API/internal/store"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
-
-type Ping struct {
-	ID      uint   `json:"id" gorm:"primaryKey"`
-	Message string `json:"message"`
-}
 
 func main() {
 	// Initialize the database
@@ -22,23 +18,26 @@ func main() {
 	}
 
 	// Auto-migrate the schema
-	err = db.AutoMigrate(&Ping{})
+	err = db.AutoMigrate(&store.Ping{})
 	if err != nil {
 		log.Fatalf("failed to migrate database: %v", err)
 	}
+
+	// Create the store implementation
+	pingStore := store.NewGormStore(db)
 
 	r := gin.Default()
 
 	// Register routes
 	r.POST("/ping", func(c *gin.Context) {
-		var ping Ping
+		var ping store.Ping
 		if err := c.ShouldBindJSON(&ping); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
-		// Save the ping to the database
-		if result := db.Create(&ping); result.Error != nil {
+		// Save the ping using the store
+		if err := pingStore.SavePing(&ping); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save ping"})
 			return
 		}
@@ -47,10 +46,9 @@ func main() {
 	})
 
 	r.GET("/pings", func(c *gin.Context) {
-		var pings []Ping
-
-		// Retrieve all pings from the database
-		if result := db.Find(&pings); result.Error != nil {
+		// Retrieve all pings using the store
+		pings, err := pingStore.GetPings()
+		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve pings"})
 			return
 		}
