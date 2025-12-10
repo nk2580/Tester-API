@@ -7,9 +7,6 @@ import (
 	"github.com/nk2580/Tester-API/internal/store"
 )
 
-// ErrValidation is returned when input validation fails
-var ErrValidation = errors.New("validation error")
-
 // ErrEmptyMessage is returned when a ping message is empty
 var ErrEmptyMessage = errors.New("validation: message required")
 

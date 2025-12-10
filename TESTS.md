@@ -105,19 +105,6 @@ pings, _ := api.ListPings(memStore)
 // pings will contain the seeded data
 ```
 
-## Local Development Features
-
-### USE_IN_MEMORY_STORE Environment Variable
-
-For local experimentation only, you can configure the application to use the in-memory store instead of SQLite:
-
-```bash
-export USE_IN_MEMORY_STORE=true
-go run main.go
-```
-
-**⚠️ Important**: This is for local development and testing only. Do NOT enable this in production. The default production configuration uses `GormStore` backed by SQLite.
-
 ## CI Integration
 
 While this plan does not modify CI workflows, here's how to integrate these tests into your CI pipeline:
@@ -271,21 +258,6 @@ If an immediate fix is needed without reverting:
 
 2. A minimal hotfix can restore previous handler behavior in `main.go` while leaving new packages in place
 
-### Kill Switch: USE_IN_MEMORY_STORE
-
-The `USE_IN_MEMORY_STORE` environment variable is available for local development only:
-
-```bash
-# Local development only - use in-memory store
-export USE_IN_MEMORY_STORE=true
-```
-
-**⚠️ IMPORTANT**: 
-- This flag is for local experimentation and testing ONLY
-- Default production configuration uses `GormStore` backed by SQLite
-- Do NOT enable `USE_IN_MEMORY_STORE=true` in production
-- Data stored in MemoryStore is lost when the application restarts
-
 ### Rollback Checklist
 
 - [ ] Identify the commit hash before the store refactor
@@ -302,7 +274,6 @@ export USE_IN_MEMORY_STORE=true
 2. Run with race detector: `go test -race ./...`
 3. Build and verify binary: `go build .`
 4. Review logs in TESTS.md observability section
-5. Ensure USE_IN_MEMORY_STORE is not set in production config
 
 ### Post-Deployment
 
