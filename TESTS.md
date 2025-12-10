@@ -205,6 +205,122 @@ If you get "database is locked" errors:
 4. **Mock storage failures**: Use `SetErrorOnSave()` to test error handling paths
 5. **Keep tests fast**: Avoid sleep, network calls, or database access in unit tests
 
+## Observability and Monitoring
+
+### Log Messages
+
+The application now includes structured logging at key points for monitoring and debugging:
+
+#### Success Logs
+- `"save ping succeeded: id=%d, message=%s"` - When a ping is successfully created
+- `"list pings succeeded: count=%d"` - When pings are successfully retrieved
+
+#### Error Logs
+- `"failed to parse JSON: %v"` - When request body parsing fails
+- `"validation failed: %v"` - When input validation fails (e.g., empty message)
+- `"save ping failed: %v"` - When database save operation fails
+- `"list pings failed: %v"` - When database retrieval fails
+
+### Metrics to Monitor
+
+When running in production, consider monitoring:
+
+1. **PingCreationSuccessCount**: Count of successful ping creations
+2. **PingCreationErrorCount**: Count of failed ping creation attempts
+3. **PingValidationErrorCount**: Count of validation failures
+4. **GET /pings latency**: Response time for list operations (p50, p95, p99)
+5. **POST /ping latency**: Response time for create operations (p50, p95, p99)
+
+### Observability Checklist
+
+Before deploying to production, verify:
+
+- [ ] Logs are present in main.go for validation, save success/failure, and list operations
+- [ ] TESTS.md contains test run instructions
+- [ ] Unit tests are present in `internal/api` and pass locally
+- [ ] Tests run without importing gin or gorm (verified with `grep -r "gin\|gorm" internal/api/api_test.go`)
+- [ ] Application builds successfully (`go build .`)
+- [ ] All tests pass (`go test ./...`)
+
+## Rollback Plan
+
+### Quick Rollback
+
+If issues are detected in production after deploying these changes:
+
+1. **Revert the commits** that added the store/api refactors:
+   ```bash
+   git revert <commit-hash>
+   git push origin main
+   ```
+
+2. **Redeploy** the previous version:
+   ```bash
+   git checkout <previous-commit-hash>
+   # Deploy using your standard deployment process
+   ```
+
+### Emergency Hotfix
+
+If an immediate fix is needed without reverting:
+
+1. The changes are isolated to:
+   - `internal/store/*` - Store abstraction and implementations
+   - `internal/api/*` - Business logic layer
+   - `main.go` - Handler updates
+
+2. A minimal hotfix can restore previous handler behavior in `main.go` while leaving new packages in place
+
+### Kill Switch: USE_IN_MEMORY_STORE
+
+The `USE_IN_MEMORY_STORE` environment variable is available for local development only:
+
+```bash
+# Local development only - use in-memory store
+export USE_IN_MEMORY_STORE=true
+```
+
+**⚠️ IMPORTANT**: 
+- This flag is for local experimentation and testing ONLY
+- Default production configuration uses `GormStore` backed by SQLite
+- Do NOT enable `USE_IN_MEMORY_STORE=true` in production
+- Data stored in MemoryStore is lost when the application restarts
+
+### Rollback Checklist
+
+- [ ] Identify the commit hash before the store refactor
+- [ ] Test the rollback in a staging environment first
+- [ ] Monitor error rates and latency after rollback
+- [ ] Document the reason for rollback
+- [ ] Plan to address issues and redeploy when fixed
+
+## Production Deployment Considerations
+
+### Pre-Deployment
+
+1. Run full test suite: `go test ./... -v`
+2. Run with race detector: `go test -race ./...`
+3. Build and verify binary: `go build .`
+4. Review logs in TESTS.md observability section
+5. Ensure USE_IN_MEMORY_STORE is not set in production config
+
+### Post-Deployment
+
+1. Monitor logs for error patterns
+2. Check success/error rate metrics
+3. Monitor API latency (GET /pings, POST /ping)
+4. Verify database operations work correctly
+5. Test both endpoints manually:
+   ```bash
+   # Create a ping
+   curl -X POST http://localhost:8080/ping \
+     -H "Content-Type: application/json" \
+     -d '{"message":"test"}'
+   
+   # List pings
+   curl http://localhost:8080/pings
+   ```
+
 ## Additional Resources
 
 - Go testing documentation: https://golang.org/pkg/testing/
