@@ -1,0 +1,20 @@
+# Test coverage files
+coverage.out
+coverage.html
+
+# Database files
+db/data.db
+
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+Tester-API
+
+# Test binary
+*.test
+
+# Go workspace file
+go.work
