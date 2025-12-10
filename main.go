@@ -1,10 +1,12 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nk2580/Tester-API/internal/api"
 	"github.com/nk2580/Tester-API/internal/store"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -32,27 +34,40 @@ func main() {
 	r.POST("/ping", func(c *gin.Context) {
 		var ping store.Ping
 		if err := c.ShouldBindJSON(&ping); err != nil {
+			log.Printf("failed to parse JSON: %v", err)
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
-		// Save the ping using the store
-		if err := pingStore.SavePing(&ping); err != nil {
+		// Use business logic API to create ping
+		if err := api.CreatePing(pingStore, &ping); err != nil {
+			// Map validation errors to 400 Bad Request
+			if errors.Is(err, api.ErrEmptyMessage) {
+				log.Printf("validation failed: %v", err)
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			
+			// Map storage errors to 500 Internal Server Error
+			log.Printf("save ping failed: %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save ping"})
 			return
 		}
 
+		log.Printf("save ping succeeded: id=%d, message=%s", ping.ID, ping.Message)
 		c.JSON(http.StatusOK, gin.H{"message": "Ping registered successfully!"})
 	})
 
 	r.GET("/pings", func(c *gin.Context) {
-		// Retrieve all pings using the store
-		pings, err := pingStore.GetPings()
+		// Use business logic API to list pings
+		pings, err := api.ListPings(pingStore)
 		if err != nil {
+			log.Printf("list pings failed: %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve pings"})
 			return
 		}
 
+		log.Printf("list pings succeeded: count=%d", len(pings))
 		c.JSON(http.StatusOK, pings)
 	})
 
