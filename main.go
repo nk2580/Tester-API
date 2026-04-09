@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
@@ -60,6 +61,24 @@ func main() {
 
 	r.GET("/hello", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "Hello World"})
+	})
+
+	r.GET("/time", func(c *gin.Context) {
+		timezone := c.GetHeader("X-Timezone")
+		if timezone == "" {
+			timezone = "UTC"
+		}
+
+		location, err := time.LoadLocation(timezone)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid timezone. Use a valid IANA timezone (for example, America/New_York)."})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"timezone": timezone,
+			"time":     time.Now().In(location).Format(time.RFC3339),
+		})
 	})
 
 	// Start the server
