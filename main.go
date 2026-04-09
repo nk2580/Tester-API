@@ -58,6 +58,10 @@ func main() {
 		c.JSON(http.StatusOK, pings)
 	})
 
+	r.GET("/hello", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Hello World"})
+	})
+
 	// Start the server
 	if err := r.Run(":8080"); err != nil {
 		log.Fatalf("failed to run server: %v", err)
