@@ -1,0 +1,21 @@
+{
+  "agentKind": "codex",
+  "branchName": "ticket/testerapi-codex-20260412-3-convert-gin-api-to-standard-library-codex-2",
+  "bundleId": "bundle_session-testerapi-codex-20260412-5",
+  "commitSet": [
+    {
+      "repoAlias": "repo",
+      "commitSha": "8ffb6bb328a47d73985e015e705d69fd95bec795"
+    }
+  ],
+  "completedAt": "2026-04-12T09:12:06.468539Z",
+  "notesPath": "/tmp/frunl-runner-v1-codex-home/tmp/frunl-runner-v1-657338450/repos/repo/.frunl/runner-v1/sessions/session-testerapi-codex-20260412-5.md",
+  "primaryCommitSha": "8ffb6bb328a47d73985e015e705d69fd95bec795",
+  "primaryRepo": "repo",
+  "sessionId": "session-testerapi-codex-20260412-5",
+  "startedAt": "2026-04-12T09:11:35.86568Z",
+  "state": "completed",
+  "summary": "session session-testerapi-codex-20260412-5 completed",
+  "ticketId": "TESTERAPI-CODEX-20260412-3",
+  "workspaceId": "workspace-testerapi-codex-20260412-2"
+}
