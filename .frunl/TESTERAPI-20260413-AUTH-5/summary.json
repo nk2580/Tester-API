@@ -1,0 +1,53 @@
+{
+  "sessionId": "session-testerapi-20260413-auth-5",
+  "bundleId": "bundle_session-testerapi-20260413-auth-5",
+  "workspaceId": "workspace-testerapi-codex-20260412-2",
+  "ticketId": "TESTERAPI-20260413-AUTH-5",
+  "ticketTitle": "Auth + Signup",
+  "ticketSummary": "add an authentication system and user signup system to this API",
+  "state": "failed",
+  "stageKey": "bootstrap",
+  "stageTitle": "Bootstrap",
+  "changeType": "chore",
+  "branchName": "ticket/testerapi-20260413-auth-5-auth-signup-2",
+  "primaryRepo": "repo",
+  "primaryCommitSha": "01610aebe34dd158141ffdbb3d978996c6b1349a",
+  "commitSet": [
+    {
+      "repoAlias": "repo",
+      "commitSha": "01610aebe34dd158141ffdbb3d978996c6b1349a"
+    }
+  ],
+  "startedAt": "2026-04-12T23:14:14.535196Z",
+  "completedAt": "2026-04-12T23:14:28.880588Z",
+  "artifacts": {
+    "ticketDir": ".frunl/TESTERAPI-20260413-AUTH-5",
+    "planPath": ".frunl/TESTERAPI-20260413-AUTH-5/plan.md",
+    "notesPath": ".frunl/TESTERAPI-20260413-AUTH-5/notes.md",
+    "summaryPath": ".frunl/TESTERAPI-20260413-AUTH-5/summary.json"
+  },
+  "commentContext": {
+    "stageKey": "bootstrap",
+    "stageTitle": "Bootstrap",
+    "ticketId": "TESTERAPI-20260413-AUTH-5",
+    "ticketTitle": "Auth + Signup",
+    "objective": "add an authentication system and user signup system to this API",
+    "state": "failed",
+    "summary": "Auth + Signup completed",
+    "blockingReason": "codex failed: exit status 1: Reading additional input from stdin...\n2026-04-12T23:14:25.397198Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/build-ios-apps/.codex-plugin/plugin.json\n2026-04-12T23:14:25.399569Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/life-science-research/.codex-plugin/plugin.json\nOpenAI Codex v0.120.0 (research preview)\n--------\nworkdir: /tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-1285540030/repos/repo\nmodel: openai/gpt-5.4\nprovider: openai\napproval: never\nsandbox: danger-full-access\nreasoning effort: none\nreasoning summaries: none\nsession id: 019d83f9-95e0-75a0-8cb3-035bbf000def\n--------\nuser\nBootstrap this ticket before planning or implementation begins.\nEstablish a clean working baseline for the repository, capture any setup assumptions, and commit only the changes needed to prepare the branch for planning.\nEnd the response with the fixed markdown headings `## Summary`, `## Changes`, `## Decisions`, `## Reasoning`, `## Validation`, and `## Next Actions`.\nUse short bullet lists for every section except `## Summary`.\n\nTicket: TESTERAPI-20260413-AUTH-5\nTitle: Auth + Signup\nObjective:\nadd an authentication system and user signup system to this API\n2026-04-12T23:14:25.721783Z  WARN codex_core::shell_snapshot: Failed to delete shell snapshot at \"/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/shell_snapshots/019d83f9-95e0-75a0-8cb3-035bbf000def.tmp-1776035665413771000\": Os { code: 2, kind: NotFound, message: \"No such file or directory\" }\n2026-04-12T23:14:27.261683Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/build-ios-apps/.codex-plugin/plugin.json\n2026-04-12T23:14:27.262459Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/life-science-research/.codex-plugin/plugin.json\n2026-04-12T23:14:27.267255Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/build-ios-apps/.codex-plugin/plugin.json\n2026-04-12T23:14:27.267958Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/life-science-research/.codex-plugin/plugin.json\n2026-04-12T23:14:27.274392Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/build-ios-apps/.codex-plugin/plugin.json\n2026-04-12T23:14:27.275092Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/life-science-research/.codex-plugin/plugin.json\n2026-04-12T23:14:27.289352Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/build-ios-apps/.codex-plugin/plugin.json\n2026-04-12T23:14:27.290057Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/life-science-research/.codex-plugin/plugin.json\n2026-04-12T23:14:27.306081Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/build-ios-apps/.codex-plugin/plugin.json\n2026-04-12T23:14:27.306796Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/life-science-research/.codex-plugin/plugin.json\n2026-04-12T23:14:28.232797Z  WARN codex_core::session_startup_prewarm: startup websocket prewarm setup failed: {\"type\":\"error\",\"status\":400,\"error\":{\"type\":\"invalid_request_error\",\"message\":\"The 'openai/gpt-5.4' model is not supported when using Codex with a ChatGPT account.\"}}\n2026-04-12T23:14:28.300379Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/build-ios-apps/.codex-plugin/plugin.json\n2026-04-12T23:14:28.300817Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/life-science-research/.codex-plugin/plugin.json\n2026-04-12T23:14:28.303397Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/build-ios-apps/.codex-plugin/plugin.json\n2026-04-12T23:14:28.303809Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/life-science-research/.codex-plugin/plugin.json\n2026-04-12T23:14:28.307238Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/build-ios-apps/.codex-plugin/plugin.json\n2026-04-12T23:14:28.307651Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/life-science-research/.codex-plugin/plugin.json\n2026-04-12T23:14:28.313554Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/build-ios-apps/.codex-plugin/plugin.json\n2026-04-12T23:14:28.313972Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/life-science-research/.codex-plugin/plugin.json\n2026-04-12T23:14:28.320592Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/build-ios-apps/.codex-plugin/plugin.json\n2026-04-12T23:14:28.321033Z  WARN codex_core::plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=/private/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/.tmp/plugins/plugins/life-science-research/.codex-plugin/plugin.json\nERROR: {\"type\":\"error\",\"status\":400,\"error\":{\"type\":\"invalid_request_error\",\"message\":\"The 'openai/gpt-5.4' model is not supported when using Codex with a ChatGPT account.\"}}\nERROR: {\"type\":\"error\",\"status\":400,\"error\":{\"type\":\"invalid_request_error\",\"message\":\"The 'openai/gpt-5.4' model is not supported when using Codex with a ChatGPT account.\"}}"
+  },
+  "commitSubject": "chore(TESTERAPI-20260413-AUTH-5): prepare branch for Auth + Signup",
+  "prTitle": "feat(TESTERAPI-20260413-AUTH-5): Auth + Signup",
+  "history": [
+    {
+      "sessionId": "session-testerapi-20260413-auth-5",
+      "stageKey": "bootstrap",
+      "stageTitle": "Bootstrap",
+      "state": "failed",
+      "summary": "Auth + Signup completed",
+      "commitSubject": "chore(TESTERAPI-20260413-AUTH-5): prepare branch for Auth + Signup",
+      "primaryCommitSha": "01610aebe34dd158141ffdbb3d978996c6b1349a",
+      "completedAt": "2026-04-12T23:14:28.880588Z"
+    }
+  ]
+}
