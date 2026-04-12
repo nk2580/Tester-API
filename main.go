@@ -1,11 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -16,73 +16,99 @@ type Ping struct {
 }
 
 func main() {
-	// Initialize the database
 	db, err := gorm.Open(sqlite.Open("db/data.db"), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed to connect database: %v", err)
 	}
 
-	// Auto-migrate the schema
 	err = db.AutoMigrate(&Ping{})
 	if err != nil {
 		log.Fatalf("failed to migrate database: %v", err)
 	}
 
-	r := gin.Default()
+	mux := http.NewServeMux()
 
-	// Register routes
-	r.POST("/ping", func(c *gin.Context) {
+	mux.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			methodNotAllowed(w)
+			return
+		}
+
 		var ping Ping
-		if err := c.ShouldBindJSON(&ping); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		if err := json.NewDecoder(r.Body).Decode(&ping); err != nil {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
 			return
 		}
 
-		// Save the ping to the database
 		if result := db.Create(&ping); result.Error != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save ping"})
+			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "Failed to save ping"})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": "Ping registered successfully!"})
+		writeJSON(w, http.StatusOK, map[string]string{"message": "Ping registered successfully!"})
 	})
 
-	r.GET("/pings", func(c *gin.Context) {
+	mux.HandleFunc("/pings", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			methodNotAllowed(w)
+			return
+		}
+
 		var pings []Ping
 
-		// Retrieve all pings from the database
 		if result := db.Find(&pings); result.Error != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve pings"})
+			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve pings"})
 			return
 		}
 
-		c.JSON(http.StatusOK, pings)
+		writeJSON(w, http.StatusOK, pings)
 	})
 
-	r.GET("/hello", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Hello World"})
+	mux.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			methodNotAllowed(w)
+			return
+		}
+
+		writeJSON(w, http.StatusOK, map[string]string{"message": "Hello World"})
 	})
 
-	r.GET("/time", func(c *gin.Context) {
-		timezone := c.GetHeader("X-Timezone")
+	mux.HandleFunc("/time", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			methodNotAllowed(w)
+			return
+		}
+
+		timezone := r.Header.Get("X-Timezone")
 		if timezone == "" {
 			timezone = "UTC"
 		}
 
 		location, err := time.LoadLocation(timezone)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid timezone"})
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "Invalid timezone"})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
+		writeJSON(w, http.StatusOK, map[string]string{
 			"time":     time.Now().In(location).Format(time.RFC3339),
 			"timezone": timezone,
 		})
 	})
 
-	// Start the server
-	if err := r.Run(":8080"); err != nil {
+	if err := http.ListenAndServe(":8080", mux); err != nil {
 		log.Fatalf("failed to run server: %v", err)
 	}
+}
+
+func writeJSON(w http.ResponseWriter, status int, payload any) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	if err := json.NewEncoder(w).Encode(payload); err != nil {
+		log.Printf("failed to write response: %v", err)
+	}
+}
+
+func methodNotAllowed(w http.ResponseWriter) {
+	writeJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
 }
