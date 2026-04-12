@@ -1,11 +1,12 @@
 package main
 
 import (
+	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -28,61 +29,115 @@ func main() {
 		log.Fatalf("failed to migrate database: %v", err)
 	}
 
-	r := gin.Default()
+	mux := http.NewServeMux()
 
 	// Register routes
-	r.POST("/ping", func(c *gin.Context) {
+	mux.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
 		var ping Ping
-		if err := c.ShouldBindJSON(&ping); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		if err := decodeJSONBody(r, &ping); err != nil {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
 			return
 		}
 
 		// Save the ping to the database
 		if result := db.Create(&ping); result.Error != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save ping"})
+			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "Failed to save ping"})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": "Ping registered successfully!"})
+		writeJSON(w, http.StatusOK, map[string]string{"message": "Ping registered successfully!"})
 	})
 
-	r.GET("/pings", func(c *gin.Context) {
+	mux.HandleFunc("/pings", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
 		var pings []Ping
 
 		// Retrieve all pings from the database
 		if result := db.Find(&pings); result.Error != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve pings"})
+			writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve pings"})
 			return
 		}
 
-		c.JSON(http.StatusOK, pings)
+		writeJSON(w, http.StatusOK, pings)
 	})
 
-	r.GET("/hello", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Hello World"})
+	mux.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		writeJSON(w, http.StatusOK, map[string]string{"message": "Hello World"})
 	})
 
-	r.GET("/time", func(c *gin.Context) {
-		timezone := c.GetHeader("X-Timezone")
+	mux.HandleFunc("/time", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		timezone := r.Header.Get("X-Timezone")
 		if timezone == "" {
 			timezone = "UTC"
 		}
 
 		location, err := time.LoadLocation(timezone)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid timezone"})
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "Invalid timezone"})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
+		writeJSON(w, http.StatusOK, map[string]string{
 			"time":     time.Now().In(location).Format(time.RFC3339),
 			"timezone": timezone,
 		})
 	})
 
 	// Start the server
-	if err := r.Run(":8080"); err != nil {
+	if err := http.ListenAndServe(":8080", withRecovery(mux)); err != nil {
 		log.Fatalf("failed to run server: %v", err)
 	}
+}
+
+func decodeJSONBody(r *http.Request, v any) error {
+	defer r.Body.Close()
+
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(v); err != nil {
+		return err
+	}
+
+	if decoder.More() {
+		return errors.New("invalid JSON body")
+	}
+
+	return nil
+}
+
+func writeJSON(w http.ResponseWriter, status int, data any) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		log.Printf("failed to encode JSON response: %v", err)
+	}
+}
+
+func withRecovery(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			if rec := recover(); rec != nil {
+				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			}
+		}()
+		next.ServeHTTP(w, r)
+	})
 }
