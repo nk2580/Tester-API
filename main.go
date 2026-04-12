@@ -1,11 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -15,74 +15,99 @@ type Ping struct {
 	Message string `json:"message"`
 }
 
+var db *gorm.DB
+
 func main() {
-	// Initialize the database
-	db, err := gorm.Open(sqlite.Open("db/data.db"), &gorm.Config{})
+	var err error
+	db, err = gorm.Open(sqlite.Open("db/data.db"), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed to connect database: %v", err)
 	}
 
-	// Auto-migrate the schema
 	err = db.AutoMigrate(&Ping{})
 	if err != nil {
 		log.Fatalf("failed to migrate database: %v", err)
 	}
 
-	r := gin.Default()
+	http.HandleFunc("/ping", handlePing)
+	http.HandleFunc("/pings", handlePings)
+	http.HandleFunc("/hello", handleHello)
+	http.HandleFunc("/time", handleTime)
 
-	// Register routes
-	r.POST("/ping", func(c *gin.Context) {
-		var ping Ping
-		if err := c.ShouldBindJSON(&ping); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-
-		// Save the ping to the database
-		if result := db.Create(&ping); result.Error != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save ping"})
-			return
-		}
-
-		c.JSON(http.StatusOK, gin.H{"message": "Ping registered successfully!"})
-	})
-
-	r.GET("/pings", func(c *gin.Context) {
-		var pings []Ping
-
-		// Retrieve all pings from the database
-		if result := db.Find(&pings); result.Error != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve pings"})
-			return
-		}
-
-		c.JSON(http.StatusOK, pings)
-	})
-
-	r.GET("/hello", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Hello World"})
-	})
-
-	r.GET("/time", func(c *gin.Context) {
-		timezone := c.GetHeader("X-Timezone")
-		if timezone == "" {
-			timezone = "UTC"
-		}
-
-		location, err := time.LoadLocation(timezone)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid timezone"})
-			return
-		}
-
-		c.JSON(http.StatusOK, gin.H{
-			"time":     time.Now().In(location).Format(time.RFC3339),
-			"timezone": timezone,
-		})
-	})
-
-	// Start the server
-	if err := r.Run(":8080"); err != nil {
+	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatalf("failed to run server: %v", err)
 	}
+}
+
+func respondJSON(w http.ResponseWriter, status int, data interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(data)
+}
+
+func handlePing(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		respondJSON(w, http.StatusMethodNotAllowed, map[string]interface{}{"error": "Method not allowed"})
+		return
+	}
+
+	var ping Ping
+	if err := json.NewDecoder(r.Body).Decode(&ping); err != nil {
+		respondJSON(w, http.StatusBadRequest, map[string]interface{}{"error": err.Error()})
+		return
+	}
+
+	if result := db.Create(&ping); result.Error != nil {
+		respondJSON(w, http.StatusInternalServerError, map[string]interface{}{"error": "Failed to save ping"})
+		return
+	}
+
+	respondJSON(w, http.StatusOK, map[string]interface{}{"message": "Ping registered successfully!"})
+}
+
+func handlePings(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		respondJSON(w, http.StatusMethodNotAllowed, map[string]interface{}{"error": "Method not allowed"})
+		return
+	}
+
+	var pings []Ping
+	if result := db.Find(&pings); result.Error != nil {
+		respondJSON(w, http.StatusInternalServerError, map[string]interface{}{"error": "Failed to retrieve pings"})
+		return
+	}
+
+	respondJSON(w, http.StatusOK, pings)
+}
+
+func handleHello(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		respondJSON(w, http.StatusMethodNotAllowed, map[string]interface{}{"error": "Method not allowed"})
+		return
+	}
+
+	respondJSON(w, http.StatusOK, map[string]interface{}{"message": "Hello World"})
+}
+
+func handleTime(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		respondJSON(w, http.StatusMethodNotAllowed, map[string]interface{}{"error": "Method not allowed"})
+		return
+	}
+
+	timezone := r.Header.Get("X-Timezone")
+	if timezone == "" {
+		timezone = "UTC"
+	}
+
+	location, err := time.LoadLocation(timezone)
+	if err != nil {
+		respondJSON(w, http.StatusBadRequest, map[string]interface{}{"error": "Invalid timezone"})
+		return
+	}
+
+	respondJSON(w, http.StatusOK, map[string]interface{}{
+		"time":     time.Now().In(location).Format(time.RFC3339),
+		"timezone": timezone,
+	})
 }
