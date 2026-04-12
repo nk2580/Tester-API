@@ -1,0 +1,21 @@
+{
+  "agentKind": "codex",
+  "branchName": "ticket/testerapi-auth-20260412-3-authentication-registration-and-password-reset-2",
+  "bundleId": "bundle_session-testerapi-auth-20260412-3",
+  "commitSet": [
+    {
+      "repoAlias": "repo",
+      "commitSha": "9c1f1b5db27880923d04e853be53994c11da0b45"
+    }
+  ],
+  "completedAt": "2026-04-12T10:34:40.380126Z",
+  "notesPath": "/tmp/frunl-runner-v1-codex-home-20260412-1/tmp/frunl-runner-v1-2124770813/repos/repo/.frunl/runner-v1/sessions/session-testerapi-auth-20260412-3.md",
+  "primaryCommitSha": "9c1f1b5db27880923d04e853be53994c11da0b45",
+  "primaryRepo": "repo",
+  "sessionId": "session-testerapi-auth-20260412-3",
+  "startedAt": "2026-04-12T10:33:34.84858Z",
+  "state": "completed",
+  "summary": "Planning complete. Plan committed to `.frunl/runner-v1/workflows/workflow_1775990008787970000/plan.md`. Waiting for `/approve-plan` approval comment.",
+  "ticketId": "TESTERAPI-AUTH-20260412-3",
+  "workspaceId": "workspace-testerapi-codex-20260412-2"
+}
