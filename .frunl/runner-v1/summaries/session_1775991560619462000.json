@@ -1,0 +1,21 @@
+{
+  "agentKind": "codex",
+  "branchName": "ticket/testerapi-auth-20260412-3-authentication-registration-and-password-reset-2",
+  "bundleId": "bundle_session_1775991560619462000",
+  "commitSet": [
+    {
+      "repoAlias": "repo",
+      "commitSha": "60082f4e4048fae704b2d4c6f5972561a62bc1ad"
+    }
+  ],
+  "completedAt": "2026-04-12T11:13:14.964989Z",
+  "notesPath": "/tmp/frunl-runner-v1-codex-home-20260412-1/tmp/frunl-runner-v1-4230578464/repos/repo/.frunl/runner-v1/sessions/session_1775991560619462000.md",
+  "primaryCommitSha": "60082f4e4048fae704b2d4c6f5972561a62bc1ad",
+  "primaryRepo": "repo",
+  "sessionId": "session_1775991560619462000",
+  "startedAt": "2026-04-12T10:59:25.430645Z",
+  "state": "completed",
+  "summary": "session session_1775991560619462000 completed",
+  "ticketId": "TESTERAPI-AUTH-20260412-3",
+  "workspaceId": "workspace-testerapi-codex-20260412-2"
+}
