@@ -1,0 +1,20 @@
+{
+  "branchName": "ticket/testerapi-stdlib-20260412-4-convert-gin-api-to-standard-library-acp-model-proof-live-2",
+  "bundleId": "bundle_session_1775979103487745000",
+  "commitSet": [
+    {
+      "repoAlias": "repo",
+      "commitSha": "2328fa07c29fb433fd88659fc61ad585fc3ceb68"
+    }
+  ],
+  "completedAt": "2026-04-12T07:34:24.361662Z",
+  "notesPath": "/tmp/frunl-runner-v1-opencode-auth/tmp/frunl-runner-v1-2657095540/repos/repo/.frunl/runner-v1/sessions/session_1775979103487745000.md",
+  "primaryCommitSha": "2328fa07c29fb433fd88659fc61ad585fc3ceb68",
+  "primaryRepo": "repo",
+  "sessionId": "session_1775979103487745000",
+  "startedAt": "2026-04-12T07:31:45.447595Z",
+  "state": "completed",
+  "summary": "session session_1775979103487745000 completed",
+  "ticketId": "TESTERAPI-STDLIB-20260412-4",
+  "workspaceId": "workspace-testerapi-acp-model-20260412-2"
+}
