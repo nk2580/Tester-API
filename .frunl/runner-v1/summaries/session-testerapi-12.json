@@ -1,0 +1,20 @@
+{
+  "branchName": "ticket/testerapi-9-auth-signup-2",
+  "bundleId": "bundle_session-testerapi-12",
+  "commitSet": [
+    {
+      "repoAlias": "repo",
+      "commitSha": "92e790996f7840266047a4be46360754f1df8b74"
+    }
+  ],
+  "completedAt": "2026-04-12T01:20:04.324607Z",
+  "notesPath": "/tmp/frunl-runner-v1-opencode-auth/tmp/frunl-runner-v1-3614714775/repos/repo/.frunl/runner-v1/sessions/session-testerapi-12.md",
+  "primaryCommitSha": "92e790996f7840266047a4be46360754f1df8b74",
+  "primaryRepo": "repo",
+  "sessionId": "session-testerapi-12",
+  "startedAt": "2026-04-12T01:17:08.801461Z",
+  "state": "completed",
+  "summary": "session session-testerapi-12 completed",
+  "ticketId": "TESTERAPI-9",
+  "workspaceId": "workspace-testerapi-20260412c"
+}
