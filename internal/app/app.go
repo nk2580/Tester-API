@@ -249,10 +249,20 @@ func (a *Application) login(c *gin.Context) {
 		return
 	}
 
-	if user.LockedUntil != nil && now.Before(*user.LockedUntil) {
-		a.logAudit(&user.ID, "login_blocked_locked", c.ClientIP(), "account locked")
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid email or password"})
-		return
+	if user.State == models.UserStateLocked {
+		if user.LockedUntil != nil && now.Before(*user.LockedUntil) {
+			a.logAudit(&user.ID, "login_blocked_locked", c.ClientIP(), "account locked")
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid email or password"})
+			return
+		}
+		if err := a.resetLoginFailures(&user); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to login"})
+			return
+		}
+		user.State = models.UserStateActive
+		user.LockedUntil = nil
+		user.FailedLoginAttempts = 0
+		a.logAudit(&user.ID, "lockout_cleared", c.ClientIP(), "")
 	}
 
 	if user.State != models.UserStateActive {

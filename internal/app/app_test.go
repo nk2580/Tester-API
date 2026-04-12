@@ -40,6 +40,10 @@ func (m *testMailer) SendPasswordResetConfirmationEmail(toEmail string) error {
 }
 
 func newTestServer(t *testing.T) (*httptest.Server, *testMailer, config.Config) {
+	return newTestServerWithNow(t, time.Now)
+}
+
+func newTestServerWithNow(t *testing.T, nowFn func() time.Time) (*httptest.Server, *testMailer, config.Config) {
 	t.Helper()
 	gin.SetMode(gin.TestMode)
 	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
@@ -69,7 +73,7 @@ func newTestServer(t *testing.T) (*httptest.Server, *testMailer, config.Config) 
 		PasswordMinLength:          12,
 	}
 	mailer := &testMailer{}
-	application := New(db, cfg, mailer, time.Now)
+	application := New(db, cfg, mailer, nowFn)
 	r := gin.New()
 	application.RegisterRoutes(r)
 	server := httptest.NewServer(r)
@@ -282,6 +286,54 @@ func TestLoginLockout(t *testing.T) {
 	})
 	if resp.StatusCode != http.StatusUnauthorized {
 		t.Fatalf("expected locked account to return 401 got %d", resp.StatusCode)
+	}
+}
+
+func TestLoginSucceedsAfterLockoutExpires(t *testing.T) {
+	current := time.Now()
+	server, mailer, cfg := newTestServerWithNow(t, func() time.Time {
+		return current
+	})
+	client := server.Client()
+
+	resp := postJSON(t, client, server.URL+"/auth/register", map[string]string{
+		"email":    "unlock@example.com",
+		"password": "VeryStrong#123",
+	})
+	if resp.StatusCode != http.StatusAccepted {
+		t.Fatalf("register expected 202 got %d", resp.StatusCode)
+	}
+
+	resp = postJSON(t, client, server.URL+"/auth/verify-email", map[string]string{"token": mailer.verificationTokens[0]})
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("verify expected 200 got %d", resp.StatusCode)
+	}
+
+	for i := 0; i < cfg.MaxFailedLoginAttempts; i++ {
+		resp = postJSON(t, client, server.URL+"/auth/login", map[string]string{
+			"email":    "unlock@example.com",
+			"password": "WrongPassword#1",
+		})
+		if resp.StatusCode != http.StatusUnauthorized {
+			t.Fatalf("expected unauthorized on failed attempt %d got %d", i+1, resp.StatusCode)
+		}
+	}
+
+	resp = postJSON(t, client, server.URL+"/auth/login", map[string]string{
+		"email":    "unlock@example.com",
+		"password": "VeryStrong#123",
+	})
+	if resp.StatusCode != http.StatusUnauthorized {
+		t.Fatalf("expected account to remain locked before expiry, got %d", resp.StatusCode)
+	}
+
+	current = current.Add(cfg.LockoutDuration + time.Second)
+	resp = postJSON(t, client, server.URL+"/auth/login", map[string]string{
+		"email":    "unlock@example.com",
+		"password": "VeryStrong#123",
+	})
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("expected login after lockout expiry to succeed, got %d", resp.StatusCode)
 	}
 }
 
