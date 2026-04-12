@@ -1,0 +1,21 @@
+{
+  "agentKind": "codex",
+  "branchName": "ticket/testerapi-auth-build-20260412-3-production-auth-registration-and-password-reset-2",
+  "bundleId": "bundle_session-testerapi-auth-build-20260412-4",
+  "commitSet": [
+    {
+      "repoAlias": "repo",
+      "commitSha": "8b8ac46fb207b1a9ee2440d77a882847aca75303"
+    }
+  ],
+  "completedAt": "2026-04-12T12:21:23.157211Z",
+  "notesPath": "/Users/nikkyriakidis/.frunl/runner-v1/codex/tmp/frunl-runner-v1-272365983/repos/repo/.frunl/runner-v1/sessions/session-testerapi-auth-build-20260412-4.md",
+  "primaryCommitSha": "8b8ac46fb207b1a9ee2440d77a882847aca75303",
+  "primaryRepo": "repo",
+  "sessionId": "session-testerapi-auth-build-20260412-4",
+  "startedAt": "2026-04-12T12:16:06.742075Z",
+  "state": "completed",
+  "summary": "session session-testerapi-auth-build-20260412-4 completed",
+  "ticketId": "TESTERAPI-AUTH-BUILD-20260412-3",
+  "workspaceId": "workspace-testerapi-build-20260412-2"
+}
