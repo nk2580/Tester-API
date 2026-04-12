@@ -1,0 +1,21 @@
+{
+  "agentKind": "codex",
+  "branchName": "ticket/testerapi-auth-build-20260412-3-production-auth-registration-and-password-reset-2",
+  "bundleId": "bundle_session_1775996490910902000",
+  "commitSet": [
+    {
+      "repoAlias": "repo",
+      "commitSha": "dafd49ae3de9678df949cd32fdb272f924df8980"
+    }
+  ],
+  "completedAt": "2026-04-12T12:22:29.448128Z",
+  "notesPath": "/Users/nikkyriakidis/.frunl/runner-v1/codex/tmp/frunl-runner-v1-1472032245/repos/repo/.frunl/runner-v1/sessions/session_1775996490910902000.md",
+  "primaryCommitSha": "dafd49ae3de9678df949cd32fdb272f924df8980",
+  "primaryRepo": "repo",
+  "sessionId": "session_1775996490910902000",
+  "startedAt": "2026-04-12T12:21:36.179195Z",
+  "state": "completed",
+  "summary": "Planning complete. Plan committed to `.frunl/runner-v1/workflows/workflow_1775996157895612000/plan.md`. Waiting for `/approve-plan` approval comment.",
+  "ticketId": "TESTERAPI-AUTH-BUILD-20260412-3",
+  "workspaceId": "workspace-testerapi-build-20260412-2"
+}
