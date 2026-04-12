@@ -1,0 +1,20 @@
+{
+  "branchName": "ticket/testerapi-stdlib-20260412-5-convert-gin-api-to-standard-library-openai-5-3-codex-2",
+  "bundleId": "bundle_session-testerapi-stdlib-20260412-5",
+  "commitSet": [
+    {
+      "repoAlias": "repo",
+      "commitSha": "9bd4c723cce18a4f1596f8b604c8ace84bb3bd22"
+    }
+  ],
+  "completedAt": "2026-04-12T08:10:45.280372Z",
+  "notesPath": "/tmp/frunl-runner-v1-opencode-auth/tmp/frunl-runner-v1-3673753501/repos/repo/.frunl/runner-v1/sessions/session-testerapi-stdlib-20260412-5.md",
+  "primaryCommitSha": "9bd4c723cce18a4f1596f8b604c8ace84bb3bd22",
+  "primaryRepo": "repo",
+  "sessionId": "session-testerapi-stdlib-20260412-5",
+  "startedAt": "2026-04-12T08:10:31.300387Z",
+  "state": "completed",
+  "summary": "session session-testerapi-stdlib-20260412-5 completed",
+  "ticketId": "TESTERAPI-STDLIB-20260412-5",
+  "workspaceId": "workspace-testerapi-acp-openai-20260412-1"
+}
