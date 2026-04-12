@@ -1,14 +1,17 @@
 module github.com/nk2580/Tester-API
 
-go 1.20
+go 1.25.0
 
-require github.com/gin-gonic/gin v1.10.0
+require (
+	github.com/gin-gonic/gin v1.10.0
+	golang.org/x/time v0.15.0
+	gorm.io/gorm v1.25.7-0.20240204074919-46816ad31dde
+)
 
 require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/mattn/go-sqlite3 v1.14.22 // indirect
-	gorm.io/gorm v1.25.7-0.20240204074919-46816ad31dde // indirect
 )
 
 require (
@@ -32,7 +35,7 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	golang.org/x/arch v0.8.0 // indirect
-	golang.org/x/crypto v0.23.0 // indirect
+	golang.org/x/crypto v0.23.0
 	golang.org/x/net v0.25.0 // indirect
 	golang.org/x/sys v0.20.0 // indirect
 	golang.org/x/text v0.15.0 // indirect

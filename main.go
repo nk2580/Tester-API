@@ -1,88 +1,69 @@
 package main
 
 import (
-	"log"
+	"context"
+	"fmt"
+	"log/slog"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
-	"github.com/gin-gonic/gin"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
+	"github.com/nk2580/Tester-API/internal/config"
+	"github.com/nk2580/Tester-API/internal/db"
+	"github.com/nk2580/Tester-API/internal/routes"
 )
 
-type Ping struct {
-	ID      uint   `json:"id" gorm:"primaryKey"`
-	Message string `json:"message"`
-}
-
 func main() {
-	// Initialize the database
-	db, err := gorm.Open(sqlite.Open("db/data.db"), &gorm.Config{})
+	cfg, err := config.Load()
 	if err != nil {
-		log.Fatalf("failed to connect database: %v", err)
+		fmt.Fprintf(os.Stderr, "failed to load config: %v\n", err)
+		os.Exit(1)
 	}
 
-	// Auto-migrate the schema
-	err = db.AutoMigrate(&Ping{})
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: cfg.LogLevel}))
+
+	gormDB, err := db.Open(cfg)
 	if err != nil {
-		log.Fatalf("failed to migrate database: %v", err)
+		logger.Error("failed to open database", "error", err)
+		os.Exit(1)
 	}
 
-	r := gin.Default()
-
-	// Register routes
-	r.POST("/ping", func(c *gin.Context) {
-		var ping Ping
-		if err := c.ShouldBindJSON(&ping); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-
-		// Save the ping to the database
-		if result := db.Create(&ping); result.Error != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save ping"})
-			return
-		}
-
-		c.JSON(http.StatusOK, gin.H{"message": "Ping registered successfully!"})
-	})
-
-	r.GET("/pings", func(c *gin.Context) {
-		var pings []Ping
-
-		// Retrieve all pings from the database
-		if result := db.Find(&pings); result.Error != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve pings"})
-			return
-		}
-
-		c.JSON(http.StatusOK, pings)
-	})
-
-	r.GET("/hello", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Hello World"})
-	})
-
-	r.GET("/time", func(c *gin.Context) {
-		timezone := c.GetHeader("X-Timezone")
-		if timezone == "" {
-			timezone = "UTC"
-		}
-
-		location, err := time.LoadLocation(timezone)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid timezone"})
-			return
-		}
-
-		c.JSON(http.StatusOK, gin.H{
-			"time":     time.Now().In(location).Format(time.RFC3339),
-			"timezone": timezone,
-		})
-	})
-
-	// Start the server
-	if err := r.Run(":8080"); err != nil {
-		log.Fatalf("failed to run server: %v", err)
+	if err := db.RunMigrations(gormDB); err != nil {
+		logger.Error("failed to run migrations", "error", err)
+		os.Exit(1)
 	}
+
+	router, err := routes.NewRouter(cfg, gormDB, logger)
+	if err != nil {
+		logger.Error("failed to build router", "error", err)
+		os.Exit(1)
+	}
+
+	srv := &http.Server{
+		Addr:              cfg.ListenAddr,
+		Handler:           router,
+		ReadHeaderTimeout: 5 * time.Second,
+	}
+
+	go func() {
+		logger.Info("server starting", "addr", cfg.ListenAddr, "env", cfg.Env)
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			logger.Error("server failed", "error", err)
+			os.Exit(1)
+		}
+	}()
+
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+	<-ctx.Done()
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(shutdownCtx); err != nil {
+		logger.Error("graceful shutdown failed", "error", err)
+		os.Exit(1)
+	}
+	logger.Info("server stopped")
 }
