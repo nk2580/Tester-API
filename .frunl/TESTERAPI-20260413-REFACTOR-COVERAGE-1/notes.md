@@ -2,43 +2,66 @@
 
 - Title: `Refactor Codebase + Raise Test Coverage`
 - Branch: `ticket/testerapi-20260413-refactor-coverage-1-refactor-codebase-raise-test-coverage-2`
-- Current Stage: `Planning`
+- Current Stage: `Implementation`
 - State: `completed`
-- Change Type: `docs`
+- Change Type: `feat`
 - Notes: `.frunl/TESTERAPI-20260413-REFACTOR-COVERAGE-1/notes.md`
 - Summary: `.frunl/TESTERAPI-20260413-REFACTOR-COVERAGE-1/summary.json`
 - Plan: `.frunl/TESTERAPI-20260413-REFACTOR-COVERAGE-1/plan.md`
 
 ## Latest Stage
-### Planning
+### Implementation
 
 #### Summary
-Implementation plan has been created and saved at the requested path, with phased execution, concrete tasks, validation gates, and risk tracking aligned to the ticket objective.
+Implemented the approved refactor-and-coverage plan with behavior-preserving code changes, expanded branch-focused tests, and a local coverage gate workflow. Coverage increased from the baseline ~60% to **98.1% total statements**, with auth/config/error helpers and middleware now at or near full coverage.
 
 #### Changes
-- Created plan file: [plan.md](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-722554232/repos/repo/.frunl/TESTERAPI-20260413-REFACTOR-COVERAGE-1/plan.md)
-- Included measurable coverage thresholds and merge-gate criteria.
-- Added phase-by-phase validation commands and risk register.
+- Refactored auth/config/routing seams in [app.go](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/app.go:43):
+- Added `loadJWTTTLSecondsFromEnv` for focused env parsing tests ([app.go](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/app.go:106)).
+- Split router registration into `registerRoutes` while preserving route behavior ([app.go](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/app.go:137)).
+- Extracted auth helpers `authUserIDFromContext`, `parseBearerToken`, `parseTokenUserID` for branch-isolated testing ([app.go](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/app.go:345)).
+- Added `signToken` seam on `App` so token-sign failure paths are testable ([app.go](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/app.go:47), [app.go](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/app.go:389)).
+- Refactored startup into testable `run()` seam in [main.go](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/main.go:18) with injectable dependencies.
+- Added broad coverage tests in [app_coverage_test.go](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/app_coverage_test.go:19):
+- Config/env parsing table tests.
+- Bearer header and JWT claim parsing branch tests.
+- Ping/time handler success + failure branches.
+- Signup/login/me/auth middleware error and edge-path tests.
+- Helper coverage for duplicate detection, writeError payload, normalization/validation.
+- Added startup-path tests in [main_test.go](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/main_test.go:12) for run success/error flows and non-fatal `main()` success path.
+- Added coverage gate script [coverage-check.sh](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/scripts/coverage-check.sh:1).
+- Documented quick/full test workflows and gate usage in [README.md](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/README.md:19).
 
 #### Decisions
-- Set “extremely high coverage” to `>=95%` total and `>=98%` critical paths.
-- Prioritized behavior-preserving refactor before broad test expansion.
-- Included explicit coverage gate as part of deliverables and exit criteria.
+- Set code changes to behavior-preserving refactor seams only.
+- Used small injectable seams (`runServer`, `signToken`) instead of broad architectural changes.
+- Implemented a hard-fail coverage gate defaulted to `95%` via script/env override.
 
 #### Reasoning
-- Numeric targets prevent ambiguity and scope drift.
-- Refactor-first improves seam quality and keeps tests maintainable.
-- Gate enforcement ensures long-term coverage retention after ticket completion.
+- Helper extraction made hard-to-hit auth/config branches independently testable.
+- Startup seams enabled `main`/bootstrap coverage without changing runtime contract.
+- Gate script enforces ongoing coverage discipline and matches plan merge criteria.
 
 #### Validation
-- Confirmed baseline command path and current baseline context.
-- Plan includes concrete pass/fail checks for each phase.
-- Plan defines objective completion via measurable exit criteria.
+- Ran: `GOMODCACHE=$(pwd)/.tmp/gomodcache GOCACHE=$(pwd)/.tmp/gocache go test ./...`
+- Ran: `GOMODCACHE=$(pwd)/.tmp/gomodcache GOCACHE=$(pwd)/.tmp/gocache go test ./... -coverprofile=.tmp/coverage.out`
+- Ran: `go tool cover -func=.tmp/coverage.out`
+- Result: **total coverage 98.1%** (`total: ... 98.1%`)
+- Notable function coverage:
+- `authMiddleware`: 100.0%
+- `loadAuthConfigFromEnv`: 100.0%
+- `loadJWTTTLSecondsFromEnv`: 100.0%
+- `parseBearerToken`: 100.0%
+- `parseTokenUserID`: 100.0%
+- `login`: 100.0%
+- `signup`: 92.6%
+- Ran gate pass: `./scripts/coverage-check.sh` → `Coverage gate passed: 98.1% >= 95.0%`
+- Ran gate failure check: `COVERAGE_THRESHOLD=99 ./scripts/coverage-check.sh` → `Coverage gate failed: 98.1% < 99.0%` (exit 1)
 
 #### Next Actions
-- Review and approve thresholds (`95/98`) if you want stricter gates.
-- Start Phase 1 refactor slices and implement tests incrementally.
-- Add CI/local gate script once Phase 2 coverage target is met.
+- Commit these changes for `TESTERAPI-20260413-REFACTOR-COVERAGE-1`.
+- Optionally wire `./scripts/coverage-check.sh` into CI as a required check.
+- If needed, raise default threshold above `95` now that current total is `98.1%`.
 
 ## Stage History
 
@@ -61,3 +84,13 @@ Implementation plan has been created and saved at the requested path, with phase
 - Decisions: Set “extremely high coverage” to `>=95%` total and `>=98%` critical paths.; Prioritized behavior-preserving refactor before broad test expansion.; Included explicit coverage gate as part of deliverables and exit criteria.
 - Validation: Confirmed baseline command path and current baseline context.; Plan includes concrete pass/fail checks for each phase.; Plan defines objective completion via measurable exit criteria.
 - Next Actions: Review and approve thresholds (`95/98`) if you want stricter gates.; Start Phase 1 refactor slices and implement tests incrementally.; Add CI/local gate script once Phase 2 coverage target is met.
+
+### Implementation
+- Session: `session_1776052201718449000`
+- State: `completed`
+- Completed: `2026-04-13T03:59:30.637602Z`
+- Summary: Implemented the approved refactor-and-coverage plan with behavior-preserving code changes, expanded branch-focused tests, and a local coverage gate workflow. Coverage increased from the baseline ~60% to **98.1% total statements**, with auth/config/error helpers and middleware now at or near full coverage.
+- Changes: Refactored auth/config/routing seams in [app.go](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/app.go:43):; Added `loadJWTTTLSecondsFromEnv` for focused env parsing tests ([app.go](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/app.go:106)).; Split router registration into `registerRoutes` while preserving route behavior ([app.go](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/app.go:137)).; Extracted auth helpers `authUserIDFromContext`, `parseBearerToken`, `parseTokenUserID` for branch-isolated testing ([app.go](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/app.go:345)).; Added `signToken` seam on `App` so token-sign failure paths are testable ([app.go](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/app.go:47), [app.go](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/app.go:389)).; Refactored startup into testable `run()` seam in [main.go](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/main.go:18) with injectable dependencies.; Added broad coverage tests in [app_coverage_test.go](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/app_coverage_test.go:19):; Config/env parsing table tests.; Bearer header and JWT claim parsing branch tests.; Ping/time handler success + failure branches.; Signup/login/me/auth middleware error and edge-path tests.; Helper coverage for duplicate detection, writeError payload, normalization/validation.; Added startup-path tests in [main_test.go](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/main_test.go:12) for run success/error flows and non-fatal `main()` success path.; Added coverage gate script [coverage-check.sh](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/scripts/coverage-check.sh:1).; Documented quick/full test workflows and gate usage in [README.md](/tmp/frunl-runner-v1-testerapi-20260413c/codex-home/tmp/frunl-runner-v1-3948238416/repos/repo/README.md:19).
+- Decisions: Set code changes to behavior-preserving refactor seams only.; Used small injectable seams (`runServer`, `signToken`) instead of broad architectural changes.; Implemented a hard-fail coverage gate defaulted to `95%` via script/env override.
+- Validation: Ran: `GOMODCACHE=$(pwd)/.tmp/gomodcache GOCACHE=$(pwd)/.tmp/gocache go test ./...`; Ran: `GOMODCACHE=$(pwd)/.tmp/gomodcache GOCACHE=$(pwd)/.tmp/gocache go test ./... -coverprofile=.tmp/coverage.out`; Ran: `go tool cover -func=.tmp/coverage.out`; Result: **total coverage 98.1%** (`total: ... 98.1%`); Notable function coverage:; `authMiddleware`: 100.0%; `loadAuthConfigFromEnv`: 100.0%; `loadJWTTTLSecondsFromEnv`: 100.0%; `parseBearerToken`: 100.0%; `parseTokenUserID`: 100.0%; `login`: 100.0%; `signup`: 92.6%; Ran gate pass: `./scripts/coverage-check.sh` → `Coverage gate passed: 98.1% >= 95.0%`; Ran gate failure check: `COVERAGE_THRESHOLD=99 ./scripts/coverage-check.sh` → `Coverage gate failed: 98.1% < 99.0%` (exit 1)
+- Next Actions: Commit these changes for `TESTERAPI-20260413-REFACTOR-COVERAGE-1`.; Optionally wire `./scripts/coverage-check.sh` into CI as a required check.; If needed, raise default threshold above `95` now that current total is `98.1%`.
