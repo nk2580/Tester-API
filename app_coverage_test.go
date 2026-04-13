@@ -285,6 +285,15 @@ func TestSignupValidationErrors(t *testing.T) {
 	if invalidPassword.Code != http.StatusBadRequest {
 		t.Fatalf("expected %d, got %d", http.StatusBadRequest, invalidPassword.Code)
 	}
+
+	// bcrypt rejects passwords longer than 72 bytes; this exercises the internal-error branch.
+	tooLongPassword := performJSONRequest(t, router, http.MethodPost, "/auth/signup", map[string]string{
+		"email":    "toolong@example.com",
+		"password": strings.Repeat("a", 73),
+	}, nil)
+	if tooLongPassword.Code != http.StatusInternalServerError {
+		t.Fatalf("expected %d, got %d", http.StatusInternalServerError, tooLongPassword.Code)
+	}
 }
 
 func TestLoginValidationAndMissingUser(t *testing.T) {
