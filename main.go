@@ -4,21 +4,34 @@ import (
 	"log"
 )
 
+var (
+	loadAuthConfig = loadAuthConfigFromEnv
+	openDB         = openDatabase
+	newApp         = NewApp
+	runServer      = func(runner interface{ Run(addr ...string) error }) error {
+		return runner.Run(serverAddress)
+	}
+)
+
+const serverAddress = ":8080"
+
+func run() error {
+	authConfig, err := loadAuthConfig()
+	if err != nil {
+		return err
+	}
+
+	db, err := openDB("db/data.db")
+	if err != nil {
+		return err
+	}
+
+	app := newApp(db, authConfig)
+	return runServer(app.Router())
+}
+
 func main() {
-	authConfig, err := loadAuthConfigFromEnv()
-	if err != nil {
-		log.Fatalf("failed to load auth config: %v", err)
-	}
-
-	db, err := openDatabase("db/data.db")
-	if err != nil {
-		log.Fatalf("failed to initialize database: %v", err)
-	}
-
-	app := NewApp(db, authConfig)
-	r := app.Router()
-
-	if err := r.Run(":8080"); err != nil {
-		log.Fatalf("failed to run server: %v", err)
+	if err := run(); err != nil {
+		log.Fatalf("failed to start server: %v", err)
 	}
 }

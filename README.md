@@ -16,6 +16,27 @@ export JWT_SECRET="replace-me"
 go run .
 ```
 
+## Test And Coverage
+
+Quick test run:
+
+```bash
+GOMODCACHE=$(pwd)/.tmp/gomodcache GOCACHE=$(pwd)/.tmp/gocache go test ./...
+```
+
+Full coverage run:
+
+```bash
+GOMODCACHE=$(pwd)/.tmp/gomodcache GOCACHE=$(pwd)/.tmp/gocache go test ./... -coverprofile=.tmp/coverage.out
+go tool cover -func=.tmp/coverage.out
+```
+
+Coverage gate (`>=95%` by default):
+
+```bash
+./scripts/coverage-check.sh
+```
+
 ## Endpoints
 
 Public endpoints:

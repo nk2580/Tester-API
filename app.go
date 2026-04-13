@@ -44,7 +44,12 @@ type App struct {
 	db         *gorm.DB
 	authConfig AuthConfig
 	now        func() time.Time
+	signToken  func(token *jwt.Token) (string, error)
 }
+
+type authContextKey string
+
+const authUserIDContextKey authContextKey = "auth_user_id"
 
 type authRequest struct {
 	Email    string `json:"email"`
@@ -87,14 +92,9 @@ func loadAuthConfigFromEnv() (AuthConfig, error) {
 		return AuthConfig{}, errors.New("JWT_SECRET is required")
 	}
 
-	ttlRaw := strings.TrimSpace(os.Getenv("JWT_TTL"))
-	ttlSeconds := defaultJWTTTLSeconds
-	if ttlRaw != "" {
-		parsed, err := strconv.Atoi(ttlRaw)
-		if err != nil || parsed <= 0 {
-			return AuthConfig{}, errors.New("JWT_TTL must be a positive integer number of seconds")
-		}
-		ttlSeconds = parsed
+	ttlSeconds, err := loadJWTTTLSecondsFromEnv()
+	if err != nil {
+		return AuthConfig{}, err
 	}
 
 	return AuthConfig{
@@ -103,17 +103,38 @@ func loadAuthConfigFromEnv() (AuthConfig, error) {
 	}, nil
 }
 
+func loadJWTTTLSecondsFromEnv() (int, error) {
+	ttlRaw := strings.TrimSpace(os.Getenv("JWT_TTL"))
+	if ttlRaw == "" {
+		return defaultJWTTTLSeconds, nil
+	}
+
+	parsed, err := strconv.Atoi(ttlRaw)
+	if err != nil || parsed <= 0 {
+		return 0, errors.New("JWT_TTL must be a positive integer number of seconds")
+	}
+
+	return parsed, nil
+}
+
 func NewApp(db *gorm.DB, authConfig AuthConfig) *App {
 	return &App{
 		db:         db,
 		authConfig: authConfig,
 		now:        time.Now,
+		signToken: func(token *jwt.Token) (string, error) {
+			return token.SignedString(authConfig.JWTSecret)
+		},
 	}
 }
 
 func (a *App) Router() *gin.Engine {
 	r := gin.Default()
+	a.registerRoutes(r)
+	return r
+}
 
+func (a *App) registerRoutes(r *gin.Engine) {
 	r.POST("/ping", a.createPing)
 	r.GET("/pings", a.listPings)
 	r.GET("/hello", func(c *gin.Context) {
@@ -128,8 +149,6 @@ func (a *App) Router() *gin.Engine {
 	protected := authGroup.Group("")
 	protected.Use(a.authMiddleware())
 	protected.GET("/me", a.me)
-
-	return r
 }
 
 func (a *App) createPing(c *gin.Context) {
@@ -264,13 +283,7 @@ func (a *App) login(c *gin.Context) {
 }
 
 func (a *App) me(c *gin.Context) {
-	userID, ok := c.Get("auth_user_id")
-	if !ok {
-		writeError(c, http.StatusUnauthorized, "unauthorized", "authentication required")
-		return
-	}
-
-	id, ok := userID.(uint)
+	id, ok := authUserIDFromContext(c)
 	if !ok {
 		writeError(c, http.StatusUnauthorized, "unauthorized", "authentication required")
 		return
@@ -298,14 +311,12 @@ func (a *App) authMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		parts := strings.SplitN(header, " ", 2)
-		if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") || strings.TrimSpace(parts[1]) == "" {
-			writeError(c, http.StatusUnauthorized, "invalid_token", "invalid authorization header")
+		tokenString, err := parseBearerToken(header)
+		if err != nil {
+			writeError(c, http.StatusUnauthorized, "invalid_token", err.Error())
 			c.Abort()
 			return
 		}
-
-		tokenString := strings.TrimSpace(parts[1])
 		claims := jwt.MapClaims{}
 		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -319,30 +330,60 @@ func (a *App) authMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		sub, err := claims.GetSubject()
-		if err != nil || strings.TrimSpace(sub) == "" {
-			writeError(c, http.StatusUnauthorized, "invalid_token", "invalid token subject")
-			c.Abort()
-			return
-		}
-
-		expiresAt, err := claims.GetExpirationTime()
-		if err != nil || expiresAt == nil || !expiresAt.After(a.now()) {
-			writeError(c, http.StatusUnauthorized, "invalid_token", "invalid or expired token")
-			c.Abort()
-			return
-		}
-
-		id64, err := strconv.ParseUint(sub, 10, 64)
+		id64, err := parseTokenUserID(claims, a.now())
 		if err != nil {
-			writeError(c, http.StatusUnauthorized, "invalid_token", "invalid token subject")
+			writeError(c, http.StatusUnauthorized, "invalid_token", err.Error())
 			c.Abort()
 			return
 		}
 
-		c.Set("auth_user_id", uint(id64))
+		c.Set(string(authUserIDContextKey), uint(id64))
 		c.Next()
 	}
+}
+
+func authUserIDFromContext(c *gin.Context) (uint, bool) {
+	userID, ok := c.Get(string(authUserIDContextKey))
+	if !ok {
+		return 0, false
+	}
+	id, ok := userID.(uint)
+	if !ok {
+		return 0, false
+	}
+	return id, true
+}
+
+func parseBearerToken(header string) (string, error) {
+	if header == "" {
+		return "", errors.New("authorization token is required")
+	}
+
+	parts := strings.SplitN(header, " ", 2)
+	if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") || strings.TrimSpace(parts[1]) == "" {
+		return "", errors.New("invalid authorization header")
+	}
+
+	return strings.TrimSpace(parts[1]), nil
+}
+
+func parseTokenUserID(claims jwt.MapClaims, now time.Time) (uint64, error) {
+	sub, err := claims.GetSubject()
+	if err != nil || strings.TrimSpace(sub) == "" {
+		return 0, errors.New("invalid token subject")
+	}
+
+	expiresAt, err := claims.GetExpirationTime()
+	if err != nil || expiresAt == nil || !expiresAt.After(now) {
+		return 0, errors.New("invalid or expired token")
+	}
+
+	id64, err := strconv.ParseUint(sub, 10, 64)
+	if err != nil {
+		return 0, errors.New("invalid token subject")
+	}
+
+	return id64, nil
 }
 
 func (a *App) generateToken(userID uint) (authTokenResponse, error) {
@@ -356,7 +397,7 @@ func (a *App) generateToken(userID uint) (authTokenResponse, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signed, err := token.SignedString(a.authConfig.JWTSecret)
+	signed, err := a.signToken(token)
 	if err != nil {
 		return authTokenResponse{}, err
 	}
