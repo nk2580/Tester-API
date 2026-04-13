@@ -175,6 +175,76 @@ func TestAuthMiddlewareMissingInvalidExpiredAndValidToken(t *testing.T) {
 	}
 }
 
+func TestAuthMiddlewareMalformedAuthorizationHeader(t *testing.T) {
+	app := testApp(t)
+	router := app.Router()
+
+	malformedResp := performJSONRequest(t, router, http.MethodGet, "/auth/me", nil, map[string]string{
+		"Authorization": "Token abc",
+	})
+	if malformedResp.Code != http.StatusUnauthorized {
+		t.Fatalf("expected %d, got %d body=%s", http.StatusUnauthorized, malformedResp.Code, malformedResp.Body.String())
+	}
+
+	emptyBearerResp := performJSONRequest(t, router, http.MethodGet, "/auth/me", nil, map[string]string{
+		"Authorization": "Bearer   ",
+	})
+	if emptyBearerResp.Code != http.StatusUnauthorized {
+		t.Fatalf("expected %d, got %d body=%s", http.StatusUnauthorized, emptyBearerResp.Code, emptyBearerResp.Body.String())
+	}
+}
+
+func TestLoadAuthConfigFromEnv(t *testing.T) {
+	t.Run("missing secret", func(t *testing.T) {
+		t.Setenv("JWT_SECRET", "")
+		t.Setenv("JWT_TTL", "")
+
+		_, err := loadAuthConfigFromEnv()
+		if err == nil {
+			t.Fatalf("expected error when JWT_SECRET is missing")
+		}
+	})
+
+	t.Run("default ttl", func(t *testing.T) {
+		t.Setenv("JWT_SECRET", "test-secret")
+		t.Setenv("JWT_TTL", "")
+
+		cfg, err := loadAuthConfigFromEnv()
+		if err != nil {
+			t.Fatalf("expected config, got error: %v", err)
+		}
+		if string(cfg.JWTSecret) != "test-secret" {
+			t.Fatalf("expected JWT secret to be loaded")
+		}
+		if cfg.JWTTTL != time.Duration(defaultJWTTTLSeconds)*time.Second {
+			t.Fatalf("expected default JWT TTL, got %v", cfg.JWTTTL)
+		}
+	})
+
+	t.Run("custom ttl", func(t *testing.T) {
+		t.Setenv("JWT_SECRET", "test-secret")
+		t.Setenv("JWT_TTL", "120")
+
+		cfg, err := loadAuthConfigFromEnv()
+		if err != nil {
+			t.Fatalf("expected config, got error: %v", err)
+		}
+		if cfg.JWTTTL != 120*time.Second {
+			t.Fatalf("expected custom JWT TTL, got %v", cfg.JWTTTL)
+		}
+	})
+
+	t.Run("invalid ttl", func(t *testing.T) {
+		t.Setenv("JWT_SECRET", "test-secret")
+		t.Setenv("JWT_TTL", "abc")
+
+		_, err := loadAuthConfigFromEnv()
+		if err == nil {
+			t.Fatalf("expected error for invalid JWT_TTL")
+		}
+	})
+}
+
 func TestPublicRoutesRemainAccessible(t *testing.T) {
 	app := testApp(t)
 	router := app.Router()
