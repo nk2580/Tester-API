@@ -8,12 +8,25 @@ Set the following environment variables before running the API:
 
 - `JWT_SECRET` (required): secret key used to sign JWT access tokens.
 - `JWT_TTL` (optional): access token TTL in seconds. Default: `3600`.
+- `DB_PATH` (optional): path to the SQLite database file. Default: `db/data.db`.
+- `HTTP_ADDRESS` (optional): address passed to `gin.Engine.Run`. Default: `:8080`.
+
+## Project Layout
+
+The monolithic `main.go`/`app.go` combo has been split into focused packages:
+
+- `cmd/api` – the composition root that loads configuration, opens the database, and runs the server.
+- `internal/config` – environment-driven configuration loading with sane defaults.
+- `internal/data` – data models, store interfaces, and the SQLite-backed implementation.
+- `internal/auth`, `internal/ping`, `internal/time` – domain-specific HTTP handlers and middleware.
+- `internal/server` – dependency injection, router creation, and test-facing helpers.
+- `internal/httputil` – shared HTTP helpers (e.g., JSON error responses).
 
 ## Run
 
 ```bash
 export JWT_SECRET="replace-me"
-go run .
+go run ./cmd/api
 ```
 
 ## Endpoints
