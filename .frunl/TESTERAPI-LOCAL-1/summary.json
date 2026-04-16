@@ -1,0 +1,53 @@
+{
+  "sessionId": "session-testerapi-local-1",
+  "bundleId": "bundle_session-testerapi-local-1",
+  "workspaceId": "workspace-testerapi",
+  "ticketId": "TESTERAPI-LOCAL-1",
+  "ticketTitle": "Local runtime PR smoke test",
+  "ticketSummary": "Implement a minimal, production-safe improvement in this API and prepare it for PR review. Keep scope small and include tests.",
+  "state": "failed",
+  "stageKey": "bootstrap",
+  "stageTitle": "Bootstrap",
+  "changeType": "chore",
+  "branchName": "ticket/testerapi-local-1-local-runtime-pr-smoke-test-2",
+  "primaryRepo": "repo",
+  "primaryCommitSha": "128a849b0c409a0b7a78a6899709ca4ab87faf0f",
+  "commitSet": [
+    {
+      "repoAlias": "repo",
+      "commitSha": "128a849b0c409a0b7a78a6899709ca4ab87faf0f"
+    }
+  ],
+  "startedAt": "2026-04-16T05:35:13.728663Z",
+  "completedAt": "2026-04-16T05:35:29.909799Z",
+  "artifacts": {
+    "ticketDir": ".frunl/TESTERAPI-LOCAL-1",
+    "planPath": ".frunl/TESTERAPI-LOCAL-1/plan.md",
+    "notesPath": ".frunl/TESTERAPI-LOCAL-1/notes.md",
+    "summaryPath": ".frunl/TESTERAPI-LOCAL-1/summary.json"
+  },
+  "commentContext": {
+    "stageKey": "bootstrap",
+    "stageTitle": "Bootstrap",
+    "ticketId": "TESTERAPI-LOCAL-1",
+    "ticketTitle": "Local runtime PR smoke test",
+    "objective": "Implement a minimal, production-safe improvement in this API and prepare it for PR review. Keep scope small and include tests.",
+    "state": "failed",
+    "summary": "Local runtime PR smoke test completed",
+    "blockingReason": "codex failed: exit status 1: Reading additional input from stdin...\nOpenAI Codex v0.120.0 (research preview)\n--------\nworkdir: /var/folders/n5/98mk6hm96vn24wyqz_7m40r80000gn/T/frunl-runner-v1-3583312617/repos/repo\nmodel: openai/gpt-5.4\nprovider: openai\napproval: never\nsandbox: danger-full-access\nreasoning effort: high\nreasoning summaries: none\nsession id: 019d94c9-72d6-7f43-9042-b529859a7668\n--------\nuser\nBootstrap this ticket before planning or implementation begins.\nEstablish a clean working baseline for the repository, capture any setup assumptions, and commit only the changes needed to prepare the branch for planning.\nEnd the response with the fixed markdown headings `## Summary`, `## Changes`, `## Decisions`, `## Reasoning`, `## Validation`, and `## Next Actions`.\nUse short bullet lists for every section except `## Summary`.\n\nTicket: TESTERAPI-LOCAL-1\nTitle: Local runtime PR smoke test\nObjective:\nImplement a minimal, production-safe improvement in this API and prepare it for PR review. Keep scope small and include tests.\n2026-04-16T05:35:25.454376Z ERROR rmcp::transport::worker: worker quit with fatal: Transport channel closed, when Auth(TokenRefreshFailed(\"Server returned error response: invalid_grant: The provided authorization grant is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client.\"))\nERROR: {\"type\":\"error\",\"status\":400,\"error\":{\"type\":\"invalid_request_error\",\"message\":\"The 'openai/gpt-5.4' model is not supported when using Codex with a ChatGPT account.\"}}\nERROR: {\"type\":\"error\",\"status\":400,\"error\":{\"type\":\"invalid_request_error\",\"message\":\"The 'openai/gpt-5.4' model is not supported when using Codex with a ChatGPT account.\"}}"
+  },
+  "commitSubject": "chore(TESTERAPI-LOCAL-1): prepare branch for Local runtime PR smoke test",
+  "prTitle": "feat(TESTERAPI-LOCAL-1): Local runtime PR smoke test",
+  "history": [
+    {
+      "sessionId": "session-testerapi-local-1",
+      "stageKey": "bootstrap",
+      "stageTitle": "Bootstrap",
+      "state": "failed",
+      "summary": "Local runtime PR smoke test completed",
+      "commitSubject": "chore(TESTERAPI-LOCAL-1): prepare branch for Local runtime PR smoke test",
+      "primaryCommitSha": "128a849b0c409a0b7a78a6899709ca4ab87faf0f",
+      "completedAt": "2026-04-16T05:35:29.909799Z"
+    }
+  ]
+}
