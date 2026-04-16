@@ -1,0 +1,52 @@
+{
+  "sessionId": "session-testerapi-smoke-1776328101",
+  "bundleId": "bundle-testerapi-smoke-1776328101",
+  "workspaceId": "workspace-testerapi-smoke-1776328101",
+  "ticketId": "TESTERAPI-SMOKE-1776328101",
+  "ticketTitle": "Tester API runtime smoke 1776328101",
+  "ticketSummary": "Smoke validation run: keep edits minimal and safe.",
+  "state": "completed",
+  "stageKey": "session",
+  "stageTitle": "Session",
+  "changeType": "chore",
+  "branchName": "ticket/testerapi-smoke-1776328101",
+  "primaryRepo": "primary",
+  "primaryCommitSha": "adcf032ea83f12b2841c0101508440f73f56492b",
+  "commitSet": [
+    {
+      "repoAlias": "primary",
+      "commitSha": "adcf032ea83f12b2841c0101508440f73f56492b"
+    }
+  ],
+  "startedAt": "2026-04-16T08:28:22.354907Z",
+  "completedAt": "2026-04-16T08:29:26.282523Z",
+  "artifacts": {
+    "ticketDir": ".frunl/TESTERAPI-SMOKE-1776328101",
+    "planPath": ".frunl/TESTERAPI-SMOKE-1776328101/plan.md",
+    "notesPath": ".frunl/TESTERAPI-SMOKE-1776328101/notes.md",
+    "summaryPath": ".frunl/TESTERAPI-SMOKE-1776328101/summary.json"
+  },
+  "commentContext": {
+    "stageKey": "session",
+    "stageTitle": "Session",
+    "ticketId": "TESTERAPI-SMOKE-1776328101",
+    "ticketTitle": "Tester API runtime smoke 1776328101",
+    "objective": "Smoke validation run: keep edits minimal and safe.",
+    "state": "completed",
+    "summary": "Smoke validation completed with no edits."
+  },
+  "commitSubject": "chore(TESTERAPI-SMOKE-1776328101): Smoke validation completed with no edits",
+  "prTitle": "feat(TESTERAPI-SMOKE-1776328101): Tester API runtime smoke 1776328101",
+  "history": [
+    {
+      "sessionId": "session-testerapi-smoke-1776328101",
+      "stageKey": "session",
+      "stageTitle": "Session",
+      "state": "completed",
+      "summary": "Smoke validation completed with no edits.",
+      "commitSubject": "chore(TESTERAPI-SMOKE-1776328101): Smoke validation completed with no edits",
+      "primaryCommitSha": "adcf032ea83f12b2841c0101508440f73f56492b",
+      "completedAt": "2026-04-16T08:29:26.282523Z"
+    }
+  ]
+}
